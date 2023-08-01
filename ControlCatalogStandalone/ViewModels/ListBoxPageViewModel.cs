@@ -73,7 +73,7 @@ namespace ControlCatalogStandalone.ViewModels
         public MiniCommand RemoveItemCommand { get; }
         public MiniCommand SelectRandomItemCommand { get; }
 
-        private ItemModel GenerateItem() => new ItemModel(_counter ++);  
+        private ItemModel GenerateItem() => new ItemModel(Counter++);  
     }
 
     /// <summary>

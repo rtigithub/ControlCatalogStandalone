@@ -5,6 +5,8 @@
   <LangVersion>latest</LangVersion>
   <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 </PropertyGroup>
 
 
@@ -17,14 +19,14 @@
   <EmbeddedResource Include="Pages\teapot.bin" />
 </ItemGroup> 
 <ItemGroup>
-  <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-  <PackageReference Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
-  <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
-  <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+  <PackageReference Include="Avalonia" Version="11.0.2" />
+  <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.2" />
+  <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2" />
+  <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
 
   <!--Restore the Avalonia.Diagnostics conditional access later when we fix transitive packages for ColorView and DataGrid. -->
-  <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+  <PackageReference Include="Avalonia.Diagnostics" Version="11.0.2" />
+  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
   <PackageReference Include="System.Reactive.Linq" Version="6.0.0" />
 </ItemGroup>
 </Project>

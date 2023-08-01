@@ -4,215 +4,214 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
 using Avalonia.Rendering.Composition;
 using Avalonia.Utilities;
 
 namespace ControlCatalogStandalone.Pages
 {
-    public partial class GesturePage : UserControl
-    {
-        private bool _isInit;
-        private float _currentScale;
+     public partial class GesturePage : UserControl
+     {
+          private bool _isInit;
+          private float _currentScale;
 
-        public GesturePage()
-        {
-            InitializeComponent();
-        }
+          public GesturePage()
+          {
+               InitializeComponent();
+          }
 
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToVisualTree(e);
+          protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+          {
+               base.OnAttachedToVisualTree(e);
 
-            if(_isInit)
-            {
-                return;
-            }
-
-            _isInit = true;
-
-            SetPullHandlers(this.Find<Border>("TopPullZone"), false);
-            SetPullHandlers(this.Find<Border>("BottomPullZone"), true);
-            SetPullHandlers(this.Find<Border>("RightPullZone"), true);
-            SetPullHandlers(this.Find<Border>("LeftPullZone"), false);
-
-            var image = this.Find<Image>("PinchImage");
-            SetPinchHandlers(image);
-
-            var reset = this.Find<Button>("ResetButton");
-
-            reset!.Click += (s, e) =>
-            {
-                var compositionVisual = ElementComposition.GetElementVisual(image);
-
-                if(compositionVisual!= null)
-                {
-                    _currentScale = 1;
-                    compositionVisual.Scale = new Vector3(1,1,1);
-                    compositionVisual.Offset = default;
-                    image.InvalidateMeasure();
-                }
-            };
-                
-        }
-
-        private void SetPinchHandlers(Control? control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            _currentScale = 1;
-            Vector3 currentOffset = default;
-
-            CompositionVisual? compositionVisual = null;
-
-            void InitComposition(Control visual)
-            {
-                if (compositionVisual != null)
-                {
+               if (_isInit)
+               {
                     return;
-                }
+               }
 
-                compositionVisual = ElementComposition.GetElementVisual(visual);
-            }
+               _isInit = true;
 
-            control.LayoutUpdated += (s, e) =>
-            {
-                InitComposition(control!);
-                if (compositionVisual != null)
-                {
-                    compositionVisual.Scale = new(_currentScale, _currentScale, 1);
+               SetPullHandlers(this.Find<Border>("TopPullZone"), false);
+               SetPullHandlers(this.Find<Border>("BottomPullZone"), true);
+               SetPullHandlers(this.Find<Border>("RightPullZone"), true);
+               SetPullHandlers(this.Find<Border>("LeftPullZone"), false);
 
-                    if(currentOffset == default)
+               var image = this.Find<Image>("PinchImage");
+               SetPinchHandlers(image);
+
+               var reset = this.Find<Button>("ResetButton");
+
+               reset!.Click += (s, e) =>
+               {
+                    var compositionVisual = ElementComposition.GetElementVisual(image);
+
+                    if (compositionVisual != null)
                     {
-                        currentOffset = compositionVisual.Offset;
+                         _currentScale = 1;
+                         compositionVisual.Scale = new Vector3(1, 1, 1);
+                         compositionVisual.Offset = default;
+                         image.InvalidateMeasure();
                     }
-                }
-            };
+               };
 
-            control.AddHandler(Gestures.PinchEvent, (s, e) =>
-            {
-                InitComposition(control!);
+          }
 
-                if(compositionVisual != null)
-                {
-                    var scale = _currentScale * (float)e.Scale;
+          private void SetPinchHandlers(Control? control)
+          {
+               if (control == null)
+               {
+                    return;
+               }
 
-                    if (scale <= 1)
+               _currentScale = 1;
+               Vector3D currentOffset = default;
+
+               CompositionVisual? compositionVisual = null;
+
+               void InitComposition(Control visual)
+               {
+                    if (compositionVisual != null)
                     {
-                        scale = 1;
-                        compositionVisual.Offset = default;
+                         return;
                     }
 
-                    compositionVisual.Scale = new(scale, scale, 1);
+                    compositionVisual = ElementComposition.GetElementVisual(visual);
+               }
 
-                    e.Handled = true;
-                }
-            });
+               control.LayoutUpdated += (s, e) =>
+               {
+                    InitComposition(control!);
+                    if (compositionVisual != null)
+                    {
+                         compositionVisual.Scale = new(_currentScale, _currentScale, 1);
 
-            control.AddHandler(Gestures.PinchEndedEvent, (s, e) =>
-            {
-                InitComposition(control!);
+                         if (currentOffset == default)
+                         {
+                              currentOffset = compositionVisual.Offset;
+                         }
+                    }
+               };
 
-                if (compositionVisual != null)
-                {
-                    _currentScale = compositionVisual.Scale.X;
-                }
-            });
+               control.AddHandler(Gestures.PinchEvent, (s, e) =>
+               {
+                    InitComposition(control!);
 
-            control.AddHandler(Gestures.ScrollGestureEvent, (s, e) =>
-            {
-                InitComposition(control!);
+                    if (compositionVisual != null)
+                    {
+                         var scale = _currentScale * (float)e.Scale;
 
-                if (compositionVisual != null && _currentScale != 1)
-                {
-                    currentOffset += new Vector3((float)e.Delta.X, (float)e.Delta.Y, 0);
+                         if (scale <= 1)
+                         {
+                              scale = 1;
+                              compositionVisual.Offset = default;
+                         }
 
-                    var currentSize = control.Bounds.Size * _currentScale;
+                         compositionVisual.Scale = new(scale, scale, 1);
 
-                    currentOffset = new Vector3((float)MathUtilities.Clamp(currentOffset.X, 0, currentSize.Width - control.Bounds.Width),
-                        (float)MathUtilities.Clamp(currentOffset.Y, 0, currentSize.Height - control.Bounds.Height),
-                        0);
+                         e.Handled = true;
+                    }
+               });
 
-                    compositionVisual.Offset = currentOffset * -1;
+               control.AddHandler(Gestures.PinchEndedEvent, (s, e) =>
+               {
+                    InitComposition(control!);
 
-                    e.Handled = true;
-                }
-            });
-        }
+                    if (compositionVisual != null)
+                    {
+                         _currentScale = (float)compositionVisual.Scale.X;
+                    }
+               });
 
-        private void SetPullHandlers(Control? control, bool inverse)
-        {
-            if (control == null)
-            {
-                return;
-            }
+               control.AddHandler(Gestures.ScrollGestureEvent, (s, e) =>
+               {
+                    InitComposition(control!);
 
-            var ball = control.FindLogicalDescendantOfType<Border>();
+                    if (compositionVisual != null && _currentScale != 1)
+                    {
+                         currentOffset += new Vector3((float)e.Delta.X, (float)e.Delta.Y, 0);
 
-            Vector3 defaultOffset = default;
+                         var currentSize = control.Bounds.Size * _currentScale;
 
-            CompositionVisual? ballCompositionVisual = null;
+                         currentOffset = new Vector3((float)MathUtilities.Clamp(currentOffset.X, 0, currentSize.Width - control.Bounds.Width),
+                          (float)MathUtilities.Clamp(currentOffset.Y, 0, currentSize.Height - control.Bounds.Height),
+                          0);
 
-            if (ball != null)
-            {
-                InitComposition(ball);
-            }
-            else
-            {
-                return;
-            }
+                         compositionVisual.Offset = currentOffset * -1;
 
-            control.LayoutUpdated += (s, e) =>
-            {
-                InitComposition(ball!);
-                if (ballCompositionVisual != null)
-                {
-                    defaultOffset = ballCompositionVisual.Offset;
-                }
-            };
+                         e.Handled = true;
+                    }
+               });
+          }
 
-            control.AddHandler(Gestures.PullGestureEvent, (s, e) =>
-            {
-                Vector3 center = new((float)control.Bounds.Center.X, (float)control.Bounds.Center.Y, 0);
-                InitComposition(ball!);
-                if (ballCompositionVisual != null)
-                {
-                    ballCompositionVisual.Offset = defaultOffset + new Vector3((float)e.Delta.X * 0.4f, (float)e.Delta.Y * 0.4f, 0) * (inverse ? -1 : 1);
+          private void SetPullHandlers(Control? control, bool inverse)
+          {
+               if (control == null)
+               {
+                    return;
+               }
 
-                    e.Handled = true;
-                }
-            });
+               var ball = control.FindLogicalDescendantOfType<Border>();
 
-            control.AddHandler(Gestures.PullGestureEndedEvent, (s, e) =>
-            {
-                InitComposition(ball!);
-                if (ballCompositionVisual != null)
-                {
-                    ballCompositionVisual.Offset = defaultOffset;
-                }
-            });
+               Vector3D defaultOffset = default;
 
-            void InitComposition(Control control)
-            {
-                ballCompositionVisual = ElementComposition.GetElementVisual(ball);
+               CompositionVisual? ballCompositionVisual = null;
 
-                if (ballCompositionVisual != null)
-                {
-                    var offsetAnimation = ballCompositionVisual.Compositor.CreateVector3KeyFrameAnimation();
-                    offsetAnimation.Target = "Offset";
-                    offsetAnimation.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
-                    offsetAnimation.Duration = TimeSpan.FromMilliseconds(100);
+               if (ball != null)
+               {
+                    InitComposition(ball);
+               }
+               else
+               {
+                    return;
+               }
 
-                    var implicitAnimations = ballCompositionVisual.Compositor.CreateImplicitAnimationCollection();
-                    implicitAnimations["Offset"] = offsetAnimation;
+               control.LayoutUpdated += (s, e) =>
+               {
+                    InitComposition(ball!);
+                    if (ballCompositionVisual != null)
+                    {
+                         defaultOffset = ballCompositionVisual.Offset;
+                    }
+               };
 
-                    ballCompositionVisual.ImplicitAnimations = implicitAnimations;
-                }
-            }
-        }
-    }
+               control.AddHandler(Gestures.PullGestureEvent, (s, e) =>
+               {
+                    Vector3 center = new((float)control.Bounds.Center.X, (float)control.Bounds.Center.Y, 0);
+                    InitComposition(ball!);
+                    if (ballCompositionVisual != null)
+                    {
+                         ballCompositionVisual.Offset = defaultOffset + new Vector3((float)e.Delta.X * 0.4f, (float)e.Delta.Y * 0.4f, 0) * (inverse ? -1 : 1);
+
+                         e.Handled = true;
+                    }
+               });
+
+               control.AddHandler(Gestures.PullGestureEndedEvent, (s, e) =>
+               {
+                    InitComposition(ball!);
+                    if (ballCompositionVisual != null)
+                    {
+                         ballCompositionVisual.Offset = defaultOffset;
+                    }
+               });
+
+               void InitComposition(Control control)
+               {
+                    ballCompositionVisual = ElementComposition.GetElementVisual(ball);
+
+                    if (ballCompositionVisual != null)
+                    {
+                         var offsetAnimation = ballCompositionVisual.Compositor.CreateVector3KeyFrameAnimation();
+                         offsetAnimation.Target = "Offset";
+                         offsetAnimation.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
+                         offsetAnimation.Duration = TimeSpan.FromMilliseconds(100);
+
+                         var implicitAnimations = ballCompositionVisual.Compositor.CreateImplicitAnimationCollection();
+                         implicitAnimations["Offset"] = offsetAnimation;
+
+                         ballCompositionVisual.ImplicitAnimations = implicitAnimations;
+                    }
+               }
+          }
+     }
 }

@@ -12,14 +12,14 @@ namespace ControlCatalogStandalone.Pages
             InitializeComponent();
         }
         
-        protected override void OnLoaded()
-        {
-            left.Click += (s, e) => carousel?.Previous();
-            right.Click += (s, e) => carousel?.Next();
-            transition.SelectionChanged += TransitionChanged;
-            orientation.SelectionChanged += TransitionChanged;
-            base.OnLoaded();
-        }
+        //protected override void OnLoaded()
+        //{
+        //    left.Click += (s, e) => carousel?.Previous();
+        //    right.Click += (s, e) => carousel?.Next();
+        //    transition.SelectionChanged += TransitionChanged;
+        //    orientation.SelectionChanged += TransitionChanged;
+        //    base.OnLoaded();
+        //}
 
         private void TransitionChanged(object? sender, SelectionChangedEventArgs e)
         {
